@@ -6,7 +6,9 @@ var logger = require("morgan");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var app = express();
-
+var Http = require("http");
+var port = 2000;
+var http = Http.createServer(app);
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
@@ -34,6 +36,11 @@ app.use(function (err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render("error");
+});
+
+// 로컬호스트 연결
+http.listen(port, () => {
+  console.log(`Server Start Listen http://localhost:${port}`);
 });
 
 module.exports = app;
