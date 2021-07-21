@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 
-const { post } = require('../models');
+const { post, sequelize, Sequelize } = require('../models');
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -18,7 +18,9 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage});
 
 router.get('/', async (req, res) => {
-    const posts = await post.findAll({});
+    const sql = "SELECT p.id, p.content, p.createdAt, p.img, p.user_id, u.name FROM posts AS p JOIN users AS u on p.user_id = u.id";
+    const posts = await sequelize.query(sql, {type:Sequelize.QueryTypes.SELECT});
+
     res.send({ posts });
 });
 
