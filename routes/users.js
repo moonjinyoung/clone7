@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Joi = require("joi");
 const jwt = require("jsonwebtoken");
-const { Users } = require("../models");
+const { user } = require("../models");
 const { Op } = require("sequelize");
 
 const userSchema = Joi.object({
@@ -12,13 +12,12 @@ const userSchema = Joi.object({
   }),
   name: Joi.string().min(3).max(30).required(),
   password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
-  birth: Joi.number(),
+  birth: Joi.date(),
   gender: Joi.string(),
 });
 
 router.post("/signup", async (req, res) => {
   try {
-    console.log(req.body);
     const { email, name, password, birth, gender } =
         await userSchema.validateAsync(req.body);
 
@@ -28,7 +27,7 @@ router.post("/signup", async (req, res) => {
       });
       return;
     }
-    const existUsers = await Users.findAll({
+    const existUsers = await user.findAll({
       where: {
         [Op.or]: [{ email }, { name }],
       },
@@ -49,7 +48,7 @@ router.post("/signup", async (req, res) => {
         errorMessage: "성별을 정확히 기입해 주세요.",
       });
     }
-    await Users.create({ email, name, password, birth, gender });
+    await user.create({ email, name, password, birth, gender });
     res.send({});
   } catch (err) {
     console.log(err);
@@ -66,7 +65,7 @@ const loginSchema = Joi.object({
 
 router.post("/login", async (req, res) => {
   const { email, password } = await loginSchema.validateAsync(req.body);
-  const user = await Users.findOne({ where: { email, password } });
+  const user = await user.findOne({ where: { email, password } });
 
   if (!user) {
     res.status(400).send({
