@@ -13,10 +13,10 @@ module.exports = (req, res, next) => {
   }
   try {
     console.log(tokenValue)
-    const { user } = jwt.verify(tokenValue, "my-secret-key");
-    console.log(user)
-    user.findByPk(user).then((result) => {
-      res.locals.user = user;
+    const { userId } = jwt.verify(tokenValue, "my-secret-key");
+    console.log(userId)
+    user.findByPk(userId).then((result) => {
+      res.locals.user = userId;
       console.log('pleaseeeeeee', user, res.locals.user)
       next();
     });

@@ -31,11 +31,11 @@ router.get('/', authMiddleware, async (req, res, next) => {
 
 router.post('/post', authMiddleware, upload.single("image"), async (req, res, next) => {
    try {
-       const {user} = res.locals.user;
+       const {userId} = res.locals.user;
        const {content} = req.body;
        const img = `/images/${req.file.filename}`;
 
-       const post = await post.create({content, img, user});
+       const post = await post.create({content, img, userId});
 
        res.send({post: post, result: "success"});
    } catch(err) {
@@ -46,13 +46,13 @@ router.post('/post', authMiddleware, upload.single("image"), async (req, res, ne
 
 router.put('/:postId', authMiddleware, upload.single("image"), async (req, res, next) => {
     try {
-        const {user} = res.locals.user;
+        const {userId} = res.locals.user;
         const {content} = req.body;
         const {postId} = req.params;
         const img = `/images/${req.file.filename}`;
 
         const isExist = await post.findOne({
-            where: {postId, user}
+            where: {postId, userId}
         });
 
         if (isExist) {
@@ -60,7 +60,7 @@ router.put('/:postId', authMiddleware, upload.single("image"), async (req, res, 
             isExist.img = img;
             await isExist.save();
         } else {
-            await post.create({content, img, user});
+            await post.create({content, img, userId});
         }
         res.send({result: "success"});
     } catch(err) {
@@ -71,10 +71,10 @@ router.put('/:postId', authMiddleware, upload.single("image"), async (req, res, 
 
 router.delete('/:postId', authMiddleware, async (req, res) => {
    const { postId } = req.params;
-   const { user } = res.locals.user;
+   const { userId } = res.locals.user;
 
    const isExist = await post.findOne({
-       where: { postId, user }
+       where: { postId, userId }
    });
    if(isExist) {
        await isExist.destroy();
