@@ -12,6 +12,7 @@ module.exports = (req, res, next) => {
     return;
   }
   try {
+    console.log(tokenValue)
     const { userId } = jwt.verify(tokenValue, "my-secret-key");
     console.log(userId)
     user.findByPk(userId).then((user) => {

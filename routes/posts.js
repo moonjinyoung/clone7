@@ -35,9 +35,9 @@ router.post('/post', authMiddleware, upload.single("image"), async (req, res, ne
        const {content} = req.body;
        const img = `/images/${req.file.filename}`;
 
-       await post.create({content, img, user});
+       const post = await post.create({content, img, user});
 
-       res.send({result: "success"});
+       res.send({post: post, result: "success"});
    } catch(err) {
        console.error(err);
        next(err);
@@ -80,7 +80,7 @@ router.delete('/:postId', authMiddleware, async (req, res) => {
        await isExist.destroy();
    }
 
-   res.send({ result: "success" })
+   res.send({postId: postId, result: "success" })
 });
 
 module.exports = router;
