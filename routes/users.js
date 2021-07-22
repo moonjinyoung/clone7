@@ -75,7 +75,7 @@ router.post("/login", async (req, res) => {
     return;
   }
 
-  const token = jwt.sign({ userId: isExist.userId }, "my-secret-key");
+  const token = jwt.sign({ id: isExist.id }, "my-secret-key");
   console.log(token)
   res.send({
     token,
