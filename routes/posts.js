@@ -52,7 +52,7 @@ router.put('/:postId', authMiddleware, upload.single("image"), async (req, res, 
         const img = `/images/${req.file.filename}`;
 
         const isExist = await post.findOne({
-            where: {postId, user_Id}
+            where: {id: postId, user_id: user_Id}
         });
 
         if (isExist) {
@@ -74,7 +74,7 @@ router.delete('/:postId', authMiddleware, async (req, res) => {
    const { user_Id } = res.locals.user;
 
    const isExist = await post.findOne({
-       where: { postId, user_Id }
+       where: {id: postId, user_id: user_Id}
    });
    if(isExist) {
        await isExist.destroy();
