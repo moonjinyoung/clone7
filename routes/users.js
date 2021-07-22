@@ -48,6 +48,7 @@ router.post("/signup", async (req, res) => {
         errorMessage: "성별을 정확히 기입해 주세요.",
       });
     }
+    console.log(email, name, password, birth, gender);
     await user.create({ email, name, password, birth, gender });
     res.send({});
   } catch (err) {
