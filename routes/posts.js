@@ -31,7 +31,7 @@ router.get('/', authMiddleware, async (req, res, next) => {
 
 router.post('/post', authMiddleware, upload.single("image"), async (req, res, next) => {
    try {
-       const {user_Id} = res.locals.user;
+       const user_Id = res.locals.user;
        const {content} = req.body;
        const img = `/images/${req.file.filename}`;
 
@@ -46,7 +46,7 @@ router.post('/post', authMiddleware, upload.single("image"), async (req, res, ne
 
 router.put('/:postId', authMiddleware, upload.single("image"), async (req, res, next) => {
     try {
-        const {user_Id} = res.locals.user;
+        const user_Id = res.locals.user;
         const {content} = req.body;
         const {postId} = req.params;
         const img = `/images/${req.file.filename}`;
@@ -71,7 +71,7 @@ router.put('/:postId', authMiddleware, upload.single("image"), async (req, res, 
 
 router.delete('/:postId', authMiddleware, async (req, res) => {
    const { postId } = req.params;
-   const { user_Id } = res.locals.user;
+   const user_Id = res.locals.user;
    console.log(user_Id)
    const isExist = await post.findOne({
        where: {id: postId, user_id: user_Id}
