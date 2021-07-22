@@ -65,16 +65,16 @@ const loginSchema = Joi.object({
 
 router.post("/login", async (req, res) => {
   const { email, password } = await loginSchema.validateAsync(req.body);
-  const user = await user.findOne({ where: { email, password } });
+  const isExist = await user.findOne({ where: { email, password } });
 
-  if (!user) {
+  if (!isExist) {
     res.status(400).send({
       errorMessage: "이메일 또는 패스워드가 잘못됐습니다.",
     });
     return;
   }
 
-  const token = jwt.sign({ userId: user.userId }, "my-secret-key");
+  const token = jwt.sign({ userId: isExist.userId }, "my-secret-key");
   res.send({
     token,
   });
