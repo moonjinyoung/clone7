@@ -19,7 +19,7 @@ var upload = multer({ storage: storage});
 
 router.get('/', authMiddleware, async (req, res, next) => {
     try {
-        const sql = "SELECT p.id, p.content, p.createdAt, p.img, p.user_id, u.name FROM posts AS p JOIN users AS u on p.user_id = u.id";
+        const sql = "SELECT p.id, p.content, p.createdAt, p.img, p.user_id, u.name FROM posts AS p JOIN users AS u on p.user_id = u.id ORDER BY p.createdAt DESC";
         const posts = await sequelize.query(sql, {type: Sequelize.QueryTypes.SELECT});
 
         res.send({posts});
@@ -31,11 +31,11 @@ router.get('/', authMiddleware, async (req, res, next) => {
 
 router.post('/post', authMiddleware, upload.single("image"), async (req, res, next) => {
    try {
-       const {userId} = res.locals.user;
+       const {user} = res.locals.user;
        const {content} = req.body;
        const img = `/images/${req.file.filename}`;
 
-       await post.create({content, img, userId});
+       await post.create({content, img, user});
 
        res.send({result: "success"});
    } catch(err) {
@@ -46,13 +46,13 @@ router.post('/post', authMiddleware, upload.single("image"), async (req, res, ne
 
 router.put('/:postId', authMiddleware, upload.single("image"), async (req, res, next) => {
     try {
-        const {userId} = res.locals.user;
+        const {user} = res.locals.user;
         const {content} = req.body;
         const {postId} = req.params;
         const img = `/images/${req.file.filename}`;
 
         const isExist = await post.findOne({
-            where: {postId, userId}
+            where: {postId, user}
         });
 
         if (isExist) {
@@ -60,7 +60,7 @@ router.put('/:postId', authMiddleware, upload.single("image"), async (req, res, 
             isExist.img = img;
             await isExist.save();
         } else {
-            await post.create({content, img, userId});
+            await post.create({content, img, user});
         }
         res.send({result: "success"});
     } catch(err) {
@@ -71,10 +71,10 @@ router.put('/:postId', authMiddleware, upload.single("image"), async (req, res, 
 
 router.delete('/:postId', authMiddleware, async (req, res) => {
    const { postId } = req.params;
-   const { userId } = res.locals.user;
+   const { user } = res.locals.user;
 
    const isExist = await post.findOne({
-       where: { postId, userId }
+       where: { postId, user }
    });
    if(isExist) {
        await isExist.destroy();
